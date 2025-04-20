@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Bot, Chrome, Mic, Brain } from 'lucide-react'
+import { Chrome, Mic, Brain } from 'lucide-react'
 
 export default function HomePage() {
   const handleInstall = () => {
