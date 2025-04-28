@@ -1,6 +1,47 @@
 import { useState, useEffect } from 'react'
 import { Mic, MicOff } from 'lucide-react'
 
+// Define interfaces for the Web Speech API objects
+interface SpeechRecognitionEvent extends Event {
+  readonly resultIndex: number;
+  readonly results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+  readonly confidence: number;
+}
+
+// Extend the Window interface
+interface WindowWithSpeechRecognition extends Window {
+  webkitSpeechRecognition: new () => SpeechRecognition;
+}
+
+// Define the SpeechRecognition interface (adjust methods/properties as needed)
+interface SpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onend: () => void;
+  start: () => void;
+  stop: () => void;
+  // Add other properties/methods if you use them
+}
+
 export default function DemoPage() {
   const [isListening, setIsListening] = useState(false)
   const [transcript, setTranscript] = useState('')
@@ -23,19 +64,24 @@ export default function DemoPage() {
   }
 
   useEffect(() => {
+    // Check if the API is available on the extended Window type
     if ('webkitSpeechRecognition' in window) {
-      const recognition = new (window as any).webkitSpeechRecognition()
+      // Use the extended Window type for type safety
+      const recognition = new (window as WindowWithSpeechRecognition).webkitSpeechRecognition()
       recognition.continuous = false
       recognition.interimResults = true
 
-      recognition.onresult = (event: any) => {
+      // Use the specific SpeechRecognitionEvent type
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = Array.from(event.results)
-          .map((result: any) => result[0])
+          // Use the specific SpeechRecognitionResult type
+          .map((result: SpeechRecognitionResult) => result[0])
           .map(result => result.transcript)
           .join('')
-        
+
         setTranscript(transcript)
-        if (event.results[0].isFinal) {
+        // Access isFinal directly from the result
+        if (event.results[0] && event.results[0].isFinal) {
           setResponse(simulateResponse(transcript))
         }
       }

@@ -8,6 +8,7 @@ import DemoPage from './pages/DemoPage'
 import AboutPage from './pages/AboutPage'
 import PricingPage from './pages/PricingPage'
 import PrivacyPage from './pages/PrivacyPage'
+import LoginPage from './pages/LoginPage'
 import './index.css'
 
 const router = createBrowserRouter([
@@ -20,7 +21,8 @@ const router = createBrowserRouter([
       { path: 'demo', element: <DemoPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'pricing', element: <PricingPage /> },
-      { path: 'privacy', element: <PrivacyPage /> }
+      { path: 'privacy', element: <PrivacyPage /> },
+      { path: 'login', element: <LoginPage /> }
     ],
   },
 ])
